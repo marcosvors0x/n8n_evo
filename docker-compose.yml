@@ -29,7 +29,7 @@ services:
     container_name: evolution-db
     environment:
       - POSTGRES_USER=evo
-      - POSTGRES_PASSWORD=senha_magica
+      - POSTGRES_PASSWORD=senha_forte
       - POSTGRES_DB=evolution
     # Persistência de dados do PostgreSQL (não perde ao reiniciar)
     volumes:
