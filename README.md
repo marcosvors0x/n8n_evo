@@ -1,4 +1,4 @@
-# Evolução API + N8N: Guia de Implantação para Mac M1 (Self-Hosted)
+# Evolution API + N8N: Guia de Implantação para Mac M1 (Self-Hosted)
 
 Este guia descreve o procedimento para rodar a stack de automação Evolution API (Baileys) e N8N no Docker em máquinas com chip Apple Silicon (M1/ARM64).
 
