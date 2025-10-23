@@ -1,0 +1,76 @@
+# =======================================================
+# ARQUIVO: docker-compose.yml
+# DEFINIÇÃO DOS SERVIÇOS DOCKER
+# =======================================================
+version: '3.7'
+
+services:
+  evolution_api:
+    image: atendai/evolution-api:latest
+    # CORREÇÃO CRUCIAL PARA MAC M1/ARM64: 
+    # Força o Docker a emular a arquitetura AMD64 (x86-64)
+    platform: linux/amd64 
+    container_name: evolution_api
+    depends_on:
+      - evolution-db
+      - redis
+    # Carrega variáveis como AUTHENTICATION_API_KEY e CONFIG_SESSION_PHONE_VERSION
+    env_file:
+      - .env
+    # Acesso externo: seu Mac acessa via localhost:8080
+    ports:
+      - "8080:8080"
+    # Conexão à rede interna
+    networks:
+      - evolution-net
+
+  evolution-db:
+    image: postgres:15
+    container_name: evolution-db
+    environment:
+      - POSTGRES_USER=evo
+      - POSTGRES_PASSWORD=senha_magica
+      - POSTGRES_DB=evolution
+    # Persistência de dados do PostgreSQL (não perde ao reiniciar)
+    volumes:
+      - evolution_postgres_data:/var/lib/postgresql/data
+    networks:
+      - evolution-net
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    # Publica porta (opcional, mas bom para debug)
+    ports:
+      - "6379:6379"
+    # Persistência de dados do Redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - evolution-net
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    # Acesso externo: seu Mac acessa via localhost:5678
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+    # Persistência de workflows e credenciais do n8n
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - evolution-net
+
+# Definição dos Volumes e da Rede
+networks:
+  # Rede virtual que permite a comunicação entre containers (ex: evolution_api -> http://n8n:5678)
+  evolution-net:
+    driver: bridge
+
+volumes:
+  evolution_postgres_data:
+  redis-data:
+  n8n_data:
