@@ -1,53 +1,77 @@
-# Evolution API + N8N: Guia de Implantação para Mac M1 (Self-Hosted)
+# 🚀 Evolution Stack — WhatsApp API + n8n + PostgreSQL + Redis
 
-Este guia descreve o procedimento para rodar a stack de automação Evolution API (Baileys) e N8N no Docker em máquinas com chip Apple Silicon (M1/ARM64).
+Este projeto contém uma stack completa para automação inteligente com **[Evolution API](https://github.com/atendai/evolution-api)** integrada ao **n8n**, utilizando **PostgreSQL** como banco de dados e **Redis** como cache.
 
-## 1. Preparação
+---
 
-1.  **Instalar Docker Desktop:** Garanta que o Docker Desktop esteja instalado e em execução.
-2.  **Diretório:** Crie uma pasta para o projeto e coloque os arquivos `.env` e `docker-compose.yml` nela.
-    ```bash
-    mkdir evolution-stack
-    cd evolution-stack
-    # Copie os arquivos .env e docker-compose.yml para cá
-    ```
+## 📦 Tecnologias
 
-## 2. Inicialização da Stack (Algoritmo Principal)
+| Serviço         | Função Principal                                                                 |
+|-----------------|----------------------------------------------------------------------------------|
+| **Evolution API** | API para integração e automação de mensagens WhatsApp                          |
+| **PostgreSQL**     | Banco de dados relacional utilizado para persistir dados da API                |
+| **Redis**          | Cache e mensageria para otimizar desempenho e conexões                         |
+| **n8n**            | Plataforma low-code para orquestração de automações e fluxos de trabalho        |
+| **Docker Compose** | Orquestra e executa todos os containers da stack                               |
 
-Execute os comandos na sequência para iniciar a stack, garantindo que as correções de M1 e Baileys sejam aplicadas:
+---
 
-1.  **Parar e Limpar:** (Opcional, mas recomendado para um início limpo)
-    ```bash
-    docker-compose down
-    ```
+## ⚙️ Estrutura do Projeto
 
-2.  **Iniciar a Stack (Corrigida):**
-    ```bash
-    docker-compose up -d --force-recreate
-    ```
-    *OBSERVAÇÃO:* O `--force-recreate` garante que a diretiva `platform: linux/amd64` seja lida e aplicada para a emulação no M1.
 
-3.  **Verificar Logs da API:**
-    ```bash
-    docker logs evolution_api --follow
-    ```
-    Aguarde até ver a mensagem `Evolution API is working!`.
+---
 
-## 3. Configuração de Webhook e QR Code
+## 🌍 Variáveis de Ambiente (`.env`)
 
-### 3.1. Conexão do WhatsApp (QR Code)
+### 🔧 Configurações do Servidor
+| Variável | Descrição | Exemplo |
+|-----------|------------|---------|
+| `SERVER_URL` | URL onde a API será acessada | `http://localhost:8080` |
+| `SWAGGER_ENABLED` | Ativa a documentação Swagger | `true` |
+| `AUTHENTICATION_API_KEY` | Chave de autenticação para acesso à API | `senha_magica` |
+| `NODE_ENV` | Ambiente de execução | `production` |
+| `TZ` | Fuso horário padrão | `America/Sao_Paulo` |
+| `LOG_LEVEL` | Nível de log da aplicação | `info` |
 
-1.  Acesse o Painel Manager: `http://localhost:8080/manager`
-2.  Crie ou acesse sua instância.
-3.  O QR Code deve aparecer. Caso não apareça, a correção da variável `CONFIG_SESSION_PHONE_VERSION` falhou e você deve buscar uma **versão mais atualizada** de `2.3000...` e reiniciar a API.
+### 🗄️ Banco de Dados (PostgreSQL)
+| Variável | Descrição | Exemplo |
+|-----------|------------|---------|
+| `DATABASE_PROVIDER` | Tipo de banco utilizado | `postgresql` |
+| `DATABASE_CONNECTION_URI` | URI de conexão ao banco | `postgresql://evo:senha_magica@evolution-db:5432/evolution` |
+| `DATABASE_CONNECTION_CLIENT_NAME` | Nome do cliente da conexão | `evolution_exchange` |
 
-### 3.2. Configuração do Webhook (N8N)
+### 💾 Salvamento de Dados
+As opções abaixo controlam o que será persistido no banco:
 
-Esta etapa exige o uso do DNS interno do Docker:
+### ⚡ Cache (Redis)
+| Variável | Descrição | Exemplo |
+|-----------|------------|---------|
+| `CACHE_REDIS_ENABLED` | Ativa o uso de cache Redis | `true` |
+| `CACHE_REDIS_URI` | URI de conexão Redis | `redis://default:@redis:6379/0` |
 
-1.  Acesse o N8N: `http://localhost:5678`
-2.  Na configuração da instância da Evolution API (no Manager ou via API):
-    * **URL CORRETA:** Use o nome do serviço **`n8n`**, e não `localhost`.
-    * **Exemplo de URL de Webhook:** `http://n8n:5678/webhook/<seu_caminho_webhook>`
+### 🤖 Integrações
+| Variável | Descrição | Exemplo |
+|-----------|------------|---------|
+| `INTEGRATIONS_ENABLED` | Ativa integrações externas | `true` |
+| `WHATSAPP_ENABLED` | Ativa o módulo do WhatsApp | `true` |
+| `CONFIG_SESSION_PHONE_VERSION` | Define a versão da sessão WhatsApp | `2.3000.1028148389` |
 
-Com este guia, você tem a receita completa e comprovada para replicar sua stack com sucesso.
+---
+
+## 🐳 Docker Compose
+
+### Subir todos os serviços
+```bash
+docker compose up -d
+| Serviço           | Porta  | Acesso                                         |
+| ----------------- | ------ | ---------------------------------------------- |
+| **Evolution API** | `8080` | [http://localhost:8080](http://localhost:8080) |
+| **PostgreSQL**    | `5432` | Conexão interna (`evolution-db`)               |
+| **Redis**         | `6379` | Cache interno                                  |
+| **n8n**           | `5678` | [http://localhost:5678](http://localhost:5678) |
+👨‍💻 Autor
+
+Marcos Vinícius
+Engenharia de Software — Automação com IA & n8n
+📍 Brasília, Brasil
+💬 "Simplificando a automação, um fluxo por vez."
