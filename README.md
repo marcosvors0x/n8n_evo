@@ -28,7 +28,7 @@ Este projeto contém uma stack completa para automação inteligente com **[Evol
 |-----------|------------|---------|
 | `SERVER_URL` | URL onde a API será acessada | `http://localhost:8080` |
 | `SWAGGER_ENABLED` | Ativa a documentação Swagger | `true` |
-| `AUTHENTICATION_API_KEY` | Chave de autenticação para acesso à API | `senha_magica` |
+| `AUTHENTICATION_API_KEY` | Chave de autenticação para acesso à API | `sua_sennha` |
 | `NODE_ENV` | Ambiente de execução | `production` |
 | `TZ` | Fuso horário padrão | `America/Sao_Paulo` |
 | `LOG_LEVEL` | Nível de log da aplicação | `info` |
